@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>속빈 강정 · 서울 공공체육시설과 행복</title>
+<style>
+:root{--bg:#ffe5e1;--card:#fff;--ink:#3a1f1d;--pink:#ff7676;--red:#ff0000;--line:#000;--muted:#b04a45;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2a1514;--card:#3a201e;--ink:#ffe5e1;--line:#ffe5e1;--muted:#ff9a94}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif;line-height:1.5}
+header,main,footer{max-width:960px;margin:0 auto;padding:20px}
+h1{color:var(--pink);font-size:clamp(28px,6vw,44px);margin:8px 0 4px}
+.sub{color:var(--muted);margin:0}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+button{font:inherit;border:2px solid var(--pink);background:transparent;color:var(--pink);padding:6px 14px;border-radius:999px;cursor:pointer}
+button.on{background:var(--pink);color:#fff}
+.stage{background:var(--card);border-radius:24px;padding:20px;border:2px solid #bbb;overflow-x:auto}
+.grid{display:grid;gap:10px;min-width:560px}
+.tile{position:relative;display:flex;flex-direction:column;align-items:center;cursor:pointer}
+.tile svg{width:100%;max-width:84px;height:auto;overflow:visible}
+.tile span{font-size:12px;margin-top:2px}
+.tile:hover svg,.tile:focus svg{transform:scale(1.12)}
+.tile svg{transition:transform .15s}
+#tip{margin-top:14px;min-height:56px;padding:12px 16px;background:var(--card);border-radius:14px;border:2px solid var(--pink)}
+.legend{display:flex;flex-wrap:wrap;gap:20px;align-items:center;margin-top:16px;color:var(--muted);font-size:14px}
+.legend svg{width:34px;height:auto;vertical-align:middle}
+.msg{margin:28px 0;text-align:center;color:#b00000;font-weight:700}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .msg{color:#ff8a84}}
+.msg small{display:block;font-weight:400;margin-top:10px}
+</style>
+</head>
+<body>
+<header>
+<p class="sub">Seoul Open Data · 2026 Design Convergence</p>
+<h1>틀이 두꺼워도, 속은 비어 있을 수 있다</h1>
+<p class="sub">외곽선 두께 = 1인당 공공체육시설 면적 · 채워진 정도 = 2024 행복 순위</p>
+</header>
+<main>
+<div class="controls" role="group" aria-label="보기 옵션">
+<button id="b-map" class="on">지도 배치</button>
+<button id="b-rank">시설 순위순</button>
+<button id="b-happy">행복 순위순</button>
+<span style="width:12px"></span>
+<button id="s-person" class="on">사람</button>
+<button id="s-square">네모</button>
+</div>
+<div class="stage"><div class="grid" id="grid"></div></div>
+<div id="tip">자치구를 눌러 보세요.</div>
+<div class="legend">
+<span><svg viewBox="0 0 60 100"><path d="M12 34Q12 30 18 30H42Q48 30 48 34V62H40V94H32V70H28V94H20V62H12Z" fill="none" stroke="var(--line)" stroke-width="2"/><circle cx="30" cy="16" r="12" fill="none" stroke="var(--line)" stroke-width="2"/></svg> 얇은 선: 시설 적음</span>
+<span><svg viewBox="0 0 60 100"><path d="M12 34Q12 30 18 30H42Q48 30 48 34V62H40V94H32V70H28V94H20V62H12Z" fill="none" stroke="var(--line)" stroke-width="8"/><circle cx="30" cy="16" r="12" fill="none" stroke="var(--line)" stroke-width="8"/></svg> 두꺼운 선: 시설 많음</span>
+<span><svg viewBox="0 0 60 100"><path d="M12 34Q12 30 18 30H42Q48 30 48 34V62H40V94H32V70H28V94H20V62H12Z" fill="var(--red)" stroke="var(--line)" stroke-width="2"/><circle cx="30" cy="16" r="12" fill="var(--red)" stroke="var(--line)" stroke-width="2"/></svg> 가득 참: 행복 순위 높음</span>
+</div>
+<p class="msg">"시설이 쓸모없다는 뜻이 아니라, 양만으로는 설명이 안 된다는 뜻"
+<small>시설의 질과 관리 상태, 필요한 종류와 설치된 종류, 접근·이용 경험은 어떨까?</small></p>
+</main>
+<footer class="sub">Hanyang Univ. · 1인당 면적(㎡)은 자치구별 공공체육시설 수와 인구로 환산</footer>
+<script>
+// [이름, 1인당㎡, 시설순위, 행복순위, 지도열, 지도행]
+const D=[["노원구",1.297,1,12,5,0],["마포구",1.115,2,7,1,3],["양천구",.954,3,10,0,5],["송파구",.766,4,13,4,3],["중랑구",.744,5,15,5,1],["구로구",.696,6,4,1,5],["서초구",.645,7,6,3,4],["광진구",.598,8,23,4,2],["강동구",.537,9,19,5,2],["도봉구",.435,10,8,4,0],["강서구",.404,11,9,0,4],["강남구",.333,12,17,3,3],["성동구",.316,13,3,3,2],["금천구",.298,14,21,2,5],["관악구",.296,15,18,3,5],["용산구",.284,16,22,2,3],["영등포구",.279,17,11,1,4],["중구",.27,18,20,2,2],["종로구",.269,19,24,2,1],["동작구",.238,20,1,2,4],["성북구",.202,21,2,3,1],["은평구",.184,22,14,1,1],["강북구",.148,23,25,3,0],["서대문구",.115,24,5,1,2],["동대문구",.104,25,16,4,1]];
+const grid=document.getElementById('grid'),tip=document.getElementById('tip');
+let mode='map',shape='person';
+const PERSON='M12 34Q12 30 18 30H42Q48 30 48 34V62H40V94H32V70H28V94H20V62H12Z';
+function icon(d,i){
+  const fill=(26-d[3])/25, sw=1.5+(d[1]-.104)/(1.297-.104)*8.5;
+  const h=fill*100, y=100-h, id='c'+i;
+  const clip=shape==='person'?`<circle cx="30" cy="16" r="12"/><path d="${PERSON}"/>`:`<rect x="6" y="6" width="48" height="88"/>`;
+  const out=shape==='person'?`<circle cx="30" cy="16" r="12" fill="none" stroke="var(--line)" stroke-width="${sw}"/><path d="${PERSON}" fill="none" stroke="var(--line)" stroke-width="${sw}" stroke-linejoin="round"/>`:`<rect x="6" y="6" width="48" height="88" fill="none" stroke="var(--line)" stroke-width="${sw}"/>`;
+  return `<svg viewBox="-6 -6 72 112" role="img" aria-label="${d[0]}"><clipPath id="${id}">${clip}</clipPath><rect x="0" y="${y}" width="60" height="${h}" fill="var(--pink)" clip-path="url(#${id})"/>${out}</svg>`;
+}
+function render(){
+  let list=D.slice();
+  if(mode==='rank')list.sort((a,b)=>a[2]-b[2]);
+  if(mode==='happy')list.sort((a,b)=>a[3]-b[3]);
+  grid.innerHTML='';
+  if(mode==='map'){grid.style.gridTemplateColumns='repeat(6,1fr)';}
+  else{grid.style.gridTemplateColumns='repeat(5,1fr)';}
+  list.forEach((d,i)=>{
+    const t=document.createElement('div');t.className='tile';t.tabIndex=0;
+    if(mode==='map'){t.style.gridColumn=d[4]+1;t.style.gridRow=d[5]+1;}
+    t.innerHTML=icon(d,D.indexOf(d))+`<span>${d[0]}</span>`;
+    const show=()=>{tip.innerHTML=`<b>${d[0]}</b> — 1인당 공공체육시설 ${d[1]}㎡ (시설 ${d[2]}위) · 행복 ${d[3]}위`+(d[2]<=8&&d[3]>=15?'<br>시설은 많지만 속은 비어 있는 곳':d[2]>=18&&d[3]<=5?'<br>시설은 적어도 속이 꽉 찬 곳':'');};
+    t.onclick=show;t.onfocus=show;t.onmouseenter=show;
+    grid.appendChild(t);
+  });
+}
+function bind(ids,fn){ids.forEach(id=>document.getElementById(id).onclick=()=>{ids.forEach(x=>document.getElementById(x).classList.toggle('on',x===id));fn(id);render();});}
+bind(['b-map','b-rank','b-happy'],id=>mode=id.slice(2));
+bind(['s-person','s-square'],id=>shape=id.slice(2));
+render();
+</script>
+</body>
+</html>
