@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>시설은 많은데, 행복은 얼마나 찼을까? · 서울 공공체육시설과 행복</title>
+<style>
+:root{--bg:#ffe5e1;--card:#fff;--ink:#3a1f1d;--pink:#ff7676;--line:#111;--muted:#b04a45;--river:#8fc1ea;--rivertx:#2f6190;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2a1514;--card:#3a201e;--ink:#ffe5e1;--line:#ffe5e1;--muted:#ff9a94;--river:#3d6a91;--rivertx:#cfe6fa}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif;line-height:1.5}
+.wrap{height:100%;display:grid;grid-template-columns:minmax(300px,30%) 1fr;gap:clamp(16px,2.5vw,40px);padding:clamp(20px,3.5vh,44px) clamp(20px,3vw,48px)}
+aside{display:flex;flex-direction:column;justify-content:space-between;min-height:0}
+.eyebrow{color:var(--muted);font-size:13px;letter-spacing:.04em;margin:0 0 10px}
+h1{color:var(--pink);font-size:clamp(28px,3.6vw,52px);line-height:1.12;margin:0 0 14px;word-break:keep-all}
+.lead{margin:0;color:var(--muted);font-size:clamp(13px,1.2vw,16px);word-break:keep-all}
+.legend{display:flex;flex-direction:column;gap:10px;font-size:14px;margin:18px 0}
+.legend div{display:flex;align-items:center;gap:12px}
+.legend svg{width:34px;height:38px;flex:none}
+#info{background:var(--card);border:2px solid var(--pink);border-radius:16px;padding:14px 16px;min-height:96px;font-size:14px}
+#info b{font-size:18px}
+.msg{font-weight:700;color:#b00000;font-size:clamp(12px,1.1vw,15px);margin:16px 0 0;word-break:keep-all}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .msg{color:#ff8a84}}
+.stage{background:var(--card);border-radius:28px;border:2px solid #c9b5b2;min-height:0;display:flex;align-items:center;justify-content:center;padding:12px}
+.stage svg{width:100%;height:100%}
+.tile{cursor:pointer;transition:transform 1s cubic-bezier(.65,0,.35,1),opacity .15s}
+.rk{font-size:11px;font-weight:700;fill:var(--ink);text-anchor:middle;paint-order:stroke;stroke:var(--card);stroke-width:3px;opacity:0;transition:opacity .6s}
+.sorted .rk{opacity:1}
+#river{transition:opacity .6s}
+.sorted #river{opacity:0}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0}
+button{font:inherit;font-size:13px;border:2px solid var(--pink);background:transparent;color:var(--pink);padding:5px 14px;border-radius:999px;cursor:pointer}
+button.on{background:var(--pink);color:#fff}
+#cap{font-size:13px;color:var(--muted);margin:0 0 8px;min-height:20px}
+.stage.hov .tile:not(.act){opacity:.35}
+.fill{transition:transform 1.1s cubic-bezier(.2,.8,.2,1)}
+text{font-family:inherit;pointer-events:none}
+.nm{font-size:13px;font-weight:700;fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:3px;text-anchor:middle}
+@media (max-width:820px){html,body{height:auto}.wrap{display:block;height:auto}.stage{height:90vw;min-height:380px;margin-top:20px}aside{gap:16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<aside>
+<div>
+<p class="eyebrow">서울 25개 자치구 · 2024</p>
+<h1>시설은 많은데,<br>행복은 얼마나<br>찼을까?</h1>
+<p class="lead">테두리가 두꺼울수록 1인당 공공체육시설이 넓고, 안이 많이 차 있을수록 행복 순위가 높아요.</p>
+<div class="tabs" role="tablist"><button id="v-map" class="on">한강 지도</button><button id="v-rank">시설 많은 순</button><button id="v-happy">행복 높은 순</button></div>
+<div class="legend">
+<div><svg viewBox="-20 -23 40 46"><path d="M0-21L18-10.5V10.5L0 21L-18 10.5V-10.5Z" fill="none" stroke="var(--line)" stroke-width="2"/></svg>얇은 테두리 · 시설 적음</div>
+<div><svg viewBox="-20 -23 40 46"><path d="M0-21L18-10.5V10.5L0 21L-18 10.5V-10.5Z" fill="none" stroke="var(--line)" stroke-width="9" stroke-linejoin="round"/></svg>두꺼운 테두리 · 시설 많음</div>
+<div><svg viewBox="-20 -23 40 46"><path d="M0-21L18-10.5V10.5L0 21L-18 10.5V-10.5Z" fill="var(--pink)" stroke="var(--line)" stroke-width="2"/></svg>가득 참 · 행복 순위 높음</div>
+</div>
+</div>
+<div>
+<p id="cap">한강을 기준으로 본 서울</p>
+<div id="info">자치구에 마우스를 올려 보세요.</div>
+<p class="msg">시설이 쓸모없다는 뜻이 아니라, 양만으로는 설명이 안 된다는 뜻</p>
+</div>
+</aside>
+<div class="stage" id="stage"><svg id="svg" viewBox="0 0 640 525" preserveAspectRatio="xMidYMid meet" role="img" aria-label="서울 자치구별 시각화"></svg></div>
+</div>
+<script>
+// [이름, 1인당㎡, 시설순위, 행복순위, 열, 행]  (행 0-2 한강 북쪽, 3-5 남쪽)
+const D=[["노원구",1.297,1,12,5,0],["마포구",1.115,2,7,1,2],["양천구",.954,3,10,1,4],["송파구",.766,4,13,5,3],["중랑구",.744,5,15,5,1],["구로구",.696,6,4,2,4],["서초구",.645,7,6,3,3],["광진구",.598,8,23,4,2],["강동구",.537,9,19,6,3],["도봉구",.435,10,8,4,0],["강서구",.404,11,9,0,4],["강남구",.333,12,17,4,3],["성동구",.316,13,3,3,2],["금천구",.298,14,21,2,5],["관악구",.296,15,18,3,4],["용산구",.284,16,22,2,2],["영등포구",.279,17,11,1,3],["중구",.27,18,20,2,1],["종로구",.269,19,24,1,1],["동작구",.238,20,1,2,3],["성북구",.202,21,2,3,1],["은평구",.184,22,14,0,1],["강북구",.148,23,25,3,0],["서대문구",.115,24,5,0,2],["동대문구",.104,25,16,4,1]];
+const R=46,W=Math.sqrt(3)*R,r=R-2,w=Math.sqrt(3)*r,svg=document.getElementById('svg'),info=document.getElementById('info'),stage=document.getElementById('stage'),cap=document.getElementById('cap');
+const hex=`M0 ${-r}L${w/2} ${-r/2}V${r/2}L0 ${r}L${-w/2} ${r/2}V${-r/2}Z`;
+const ox=(640-(6*W+W+W/2))/2+W/2;
+let h=`<g id="river"><path d="M-10 268L120 252L260 268L400 252L540 268L650 252" fill="none" stroke="var(--river)" stroke-width="20" stroke-linejoin="miter"/><text x="585" y="286" font-size="14" font-weight="700" fill="var(--rivertx)" text-anchor="middle">한강</text></g>`;
+D.forEach((d,i)=>{
+  const f=(26-d[3])/25, sw=(1.5+(d[1]-.104)/1.193*8.5)*2;
+  h+=`<g class="tile" data-i="${i}" tabindex="0"><clipPath id="c${i}"><path d="${hex}"/></clipPath><g clip-path="url(#c${i})"><rect class="fill" data-f="${f}" x="${-w/2}" y="${-r}" width="${w}" height="${2*r}" fill="var(--pink)" style="transform:translateY(${2*r}px)"/><path d="${hex}" fill="none" stroke="var(--line)" stroke-width="${sw.toFixed(1)}"/></g><text class="nm" y="1">${d[0].replace('구','')}</text><text class="rk" y="16"></text></g>`;
+});
+svg.innerHTML=h;
+const tiles=[...svg.querySelectorAll('.tile')];
+const CAP={map:'한강을 기준으로 본 서울',rank:'1인당 공공체육시설이 넓은 순 · 테두리가 두꺼운 순',happy:'행복 순위가 높은 순 · 안이 많이 찬 순'};
+function pos(view,i){
+  const d=D[i];
+  if(view==='map')return [ox+d[4]*W+(d[5]%2)*W/2, 10+R+d[5]*69+(d[5]>=3?64:0)];
+  const k=[...D.keys()].sort((a,b)=>D[a][view==='rank'?2:3]-D[b][view==='rank'?2:3]).indexOf(i);
+  const row=Math.floor(k/5),col=k%5,x0=(640-(5*W+W/2))/2+W/2,y0=(525-(4*69+2*R))/2+R;
+  return [x0+col*W+(row%2)*W/2, y0+row*69];
+}
+function show(view){
+  stage.classList.toggle('sorted',view!=='map');
+  cap.textContent=CAP[view];
+  tiles.forEach((t,i)=>{
+    const [x,y]=pos(view,i);
+    t.style.transitionDelay=(i*22)+'ms';
+    t.style.transform=`translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;
+    t.querySelector('.rk').textContent=view==='map'?'':(view==='rank'?D[i][2]:D[i][3])+'위';
+  });
+  setTimeout(()=>tiles.forEach(t=>t.style.transitionDelay='0ms'),1700);
+  ['map','rank','happy'].forEach(v=>document.getElementById('v-'+v).classList.toggle('on',v===view));
+}
+tiles.forEach(t=>{
+  const d=D[t.dataset.i],on=()=>{t.classList.add('act');stage.classList.add('hov');
+    info.innerHTML=`<b>${d[0]}</b><br>1인당 공공체육시설 ${d[1]}㎡ (${d[2]}위) · 행복 ${d[3]}위`+(d[2]<=8&&d[3]>=15?'<br>시설은 많지만 속은 비어 있는 곳':d[2]>=18&&d[3]<=5?'<br>시설은 적어도 속이 꽉 찬 곳':'');},
+  off=()=>{t.classList.remove('act');stage.classList.remove('hov');};
+  t.onmouseenter=on;t.onfocus=on;t.onmouseleave=off;t.onblur=off;t.onclick=on;
+});
+['map','rank','happy'].forEach(v=>document.getElementById('v-'+v).onclick=()=>show(v));
+tiles.forEach((t,i)=>{const [x,y]=pos('map',i);t.style.transition='none';t.style.transform=`translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;});
+requestAnimationFrame(()=>requestAnimationFrame(()=>{tiles.forEach(t=>t.style.transition='');svg.querySelectorAll('.fill').forEach(e=>e.style.transform=`translateY(${(1-e.dataset.f)*2*r}px)`);}));
+</script>
+</body>
+</html>
